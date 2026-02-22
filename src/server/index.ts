@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { exec } from 'child_process';
 import util from 'util';
+import os from 'os';
 
 const execAsync = util.promisify(exec);
 const app = express();
@@ -51,12 +52,84 @@ app.get('/api/speedtest', (req, res) => {
     res.json(cachedSpeed);
 });
 
+app.get('/api/hostinfo', async (req, res) => {
+    try {
+        const totalMem = os.totalmem();
+        const freeMem = os.freemem();
+        const memPercent = (((totalMem - freeMem) / totalMem) * 100).toFixed(1);
+
+        const uptime = os.uptime();
+        const days = Math.floor(uptime / 86400);
+        const hours = Math.floor((uptime % 86400) / 3600);
+        const uptimeStr = `${days}d ${hours}h`;
+
+        // Get local IP
+        const interfaces = os.networkInterfaces();
+        let localIp = '127.0.0.1';
+        for (const name of Object.keys(interfaces)) {
+            for (const iface of interfaces[name] || []) {
+                if (!iface.internal && iface.family === 'IPv4') {
+                    localIp = iface.address;
+                    break;
+                }
+            }
+        }
+
+        res.json({
+            platform: os.platform(),
+            arch: os.arch(),
+            cpuCount: os.cpus().length,
+            memPercent: memPercent,
+            uptime: uptimeStr,
+            localIp: localIp
+        });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
 app.post('/api/speedtest/run', (req, res) => {
     if (cachedSpeed.isRunning) {
         return res.status(400).json({ status: 'already_running' });
     }
     runBackgroundSpeedTest();
     res.json({ status: 'started' });
+});
+
+app.get('/api/sysinfo', async (req, res) => {
+    try {
+        const { stdout } = await execAsync('system_profiler SPAirPortDataType -json');
+        const data = JSON.parse(stdout);
+        const wifiCards = data.SPAirPortDataType || [];
+
+        let activeNet = null;
+        for (const card of wifiCards) {
+            const interfaces = card.spairport_airport_interfaces || [];
+            for (const iface of interfaces) {
+                if (iface.spairport_current_network_information) {
+                    activeNet = iface.spairport_current_network_information;
+                    break;
+                }
+            }
+            if (activeNet) break;
+        }
+
+        if (activeNet) {
+            res.json({
+                ssid: activeNet._name || 'Unknown',
+                channel: activeNet.spairport_network_channel ? activeNet.spairport_network_channel.split(' ')[0] : 'Unknown', // extract channel width from "52 (5GHz, 80MHz)" regex if needed or just dump it
+                channelRaw: activeNet.spairport_network_channel,
+                security: activeNet.spairport_security_mode ? activeNet.spairport_security_mode.replace('spairport_security_mode_', '') : 'Unknown',
+                phymode: activeNet.spairport_network_phymode || 'Unknown',
+                signal: activeNet.spairport_signal_noise || 'Unknown',
+                rate: activeNet.spairport_network_rate || 'Unknown'
+            });
+        } else {
+            res.json({ error: "No active Wi-Fi" });
+        }
+    } catch (e: any) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 app.get('/api/scan', async (req, res) => {

@@ -1,8 +1,22 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-const SpeedDial = ({ value, label, unit, subtext }) => {
+const SpeedDial = ({ value, label, unit, subtext, max = 160 }) => {
   const radius = 120;
+
+  // Clamped value calculation for angle
+  const clampedValue = Math.min(Math.max(value, 0), max);
+  // Total span is roughly from -110 deg to 110 deg maybe, but the image shows:
+  // 0 at top, 40 at right, 80 at bottom, 120 at left
+  // So it's precisely a clockwise angle.
+  // 0 Mbps = 0 deg (top). 
+  // angle in radians = (clampedValue / 160) * (2 * Math.PI)
+  // Standard math: top is -Math.PI / 2
+  // Clockwise rotation maps to: angle = (clampedValue / max) * 2 * Math.PI - Math.PI / 2
+
+  const angle = (clampedValue / max) * (2 * Math.PI) - Math.PI / 2;
+  const lineEndX = 130 + radius * Math.cos(angle);
+  const lineEndY = 130 + radius * Math.sin(angle);
 
   return (
     <div className="dial-wrapper">
@@ -17,6 +31,21 @@ const SpeedDial = ({ value, label, unit, subtext }) => {
         <svg width="100%" height="100%" viewBox="0 0 260 260">
           <circle cx="130" cy="130" r={radius} className="dial-bg" fill="none" />
           <circle cx="130" cy="130" r={radius - 20} className="dial-fg" fill="none" />
+
+          {/* Spoke Line representing the value */}
+          <line
+            x1="130" y1="130"
+            x2={lineEndX} y2={lineEndY}
+            stroke="#ffffff"
+            strokeWidth="3"
+            strokeDasharray="4 4"
+            style={{ transition: 'all 0.5s ease-out' }}
+          />
+          {/* Glowing dot at intersection */}
+          <circle
+            cx={lineEndX} cy={lineEndY} r="4" fill="#ffffff"
+            style={{ transition: 'all 0.5s ease-out', filter: 'drop-shadow(0 0 4px #fff)' }}
+          />
 
           <path d="M 130 30 L 130 230 M 30 130 L 230 130" stroke="#ffffff" strokeWidth="1" strokeDasharray="4 8" opacity="0.3" />
 
@@ -36,6 +65,8 @@ const SpeedDial = ({ value, label, unit, subtext }) => {
 function App() {
   const [liveClients, setLiveClients] = useState([]);
   const [infraNodes, setInfraNodes] = useState([]);
+  const [sysInfo, setSysInfo] = useState(null);
+  const [hostInfo, setHostInfo] = useState(null);
   const [speedData, setSpeedData] = useState({ dwn: 0, up: 0, ping: 0, isRunning: false });
   const [isScanning, setIsScanning] = useState(true);
 
@@ -52,6 +83,24 @@ function App() {
         const resSpeed = await fetch('http://localhost:3001/api/speedtest');
         const dataSpeed = await resSpeed.json();
         setSpeedData(dataSpeed);
+
+        try {
+          const resSys = await fetch('http://localhost:3001/api/sysinfo');
+          const dataSys = await resSys.json();
+          if (!dataSys.error) {
+            setSysInfo(dataSys);
+          }
+        } catch (e) {
+          console.error("Sysinfo failed", e);
+        }
+
+        try {
+          const resHost = await fetch('http://localhost:3001/api/hostinfo');
+          const dataHost = await resHost.json();
+          setHostInfo(dataHost);
+        } catch (e) {
+          console.error("Host info failed", e);
+        }
 
       } catch (err) {
         console.error("API offline", err);
@@ -162,31 +211,32 @@ function App() {
         {/* CENTER COLUMN: BIG DIALS AND BOTTOM METRICS */}
         <section className="center-section">
           <div className="speed-dials-container">
-            <SpeedDial value={speedData.dwn} label="Downspeed" unit="mb" subtext={speedData.isRunning ? "TESTING" : "MBPS"} />
-            <SpeedDial value={speedData.up} label="Upload" unit="mb" subtext={speedData.isRunning ? "TESTING" : "MBPS"} />
+            {/* The scale in the screenshot implies it goes from 0 up to 160 around the circle. With down/up being potentially up to 1000Mbps, we'll scale max based on connection */}
+            <SpeedDial value={speedData.dwn} label="Downspeed" unit="mb" subtext={speedData.isRunning ? "TESTING" : "MBPS"} max={1000} />
+            <SpeedDial value={speedData.up} label="Upload" unit="mb" subtext={speedData.isRunning ? "TESTING" : "MBPS"} max={1000} />
           </div>
 
           <div className="hr-line"></div>
 
           <div className="data-row-split" style={{ marginTop: 20 }}>
             <div className="data-block">
-              <div className="title-label">Subnet Mask</div>
-              <div className="value-text">255.255.255.0</div>
+              <div className="title-label">Wi-Fi Network</div>
+              <div className="value-text">{sysInfo ? sysInfo.ssid : 'Scanning...'}</div>
             </div>
             <div className="data-block">
-              <div className="title-label">Default Gate</div>
-              <div className="value-text">192.168.1.1</div>
+              <div className="title-label">PHY Mode</div>
+              <div className="value-text">{sysInfo ? sysInfo.phymode : '...'}</div>
             </div>
           </div>
 
           <div className="data-row-split" style={{ marginTop: 20 }}>
             <div className="data-block">
               <div className="title-label">WPA Security</div>
-              <div className="value-text">WPA3-SAE</div>
+              <div className="value-text">{sysInfo ? sysInfo.security : '...'}</div>
             </div>
             <div className="data-block">
-              <div className="title-label">Channel Width</div>
-              <div className="value-text">160 <span className="value-unit">MHz</span></div>
+              <div className="title-label">Channel</div>
+              <div className="value-text">{sysInfo ? sysInfo.channelRaw : '...'}</div>
             </div>
           </div>
 
@@ -263,6 +313,44 @@ function App() {
 
               </div>
             ))}
+
+            {hostInfo && (
+              <div className="hud-card">
+
+                <div className="hud-card-header" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: 10 }}>
+                  <span className="hud-card-title">{'> LOCAL_STATION'}</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-main)' }}>ONLINE</span>
+                </div>
+
+                <div className="hud-card-body">
+                  <div className="hud-data-point">
+                    <span className="hud-data-label">Architecture</span>
+                    <span className="hud-data-value">{hostInfo.platform} / {hostInfo.arch}</span>
+                  </div>
+                  <div className="hud-data-point">
+                    <span className="hud-data-label">Local IP Address</span>
+                    <span className="hud-data-value">{hostInfo.localIp}</span>
+                  </div>
+                  <div className="hud-data-point">
+                    <span className="hud-data-label">Host Uptime</span>
+                    <span className="hud-data-value">{hostInfo.uptime}</span>
+                  </div>
+                  <div className="hud-data-point">
+                    <span className="hud-data-label">Logical Cores</span>
+                    <span className="hud-data-value">{hostInfo.cpuCount} CORES</span>
+                  </div>
+                  <div className="hud-data-point">
+                    <span className="hud-data-label">Memory Load</span>
+                    <span className="hud-data-value">{hostInfo.memPercent}% UTILIZED</span>
+                  </div>
+                </div>
+
+                <div className="hud-btn-group">
+                  <button className="hud-btn" onClick={() => window.alert(`Opening Terminal session...`)}>[ LOCAL TERMINAL ]</button>
+                </div>
+
+              </div>
+            )}
           </div>
 
           <div className="topology-container">
