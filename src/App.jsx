@@ -240,7 +240,7 @@ function App() {
             </div>
           </div>
 
-          <div style={{ marginTop: 30, border: '1px solid var(--border-color)', padding: 10, position: 'relative', overflow: 'hidden', height: 120 }}>
+          <div style={{ marginTop: 30, border: '1px solid var(--border-color)', padding: 10, position: 'relative', overflow: 'hidden', height: 120, flexShrink: 0 }}>
             <div className="title-label" style={{ position: 'absolute', top: 10, left: 10 }}>Signal Integrity Oscilloscope</div>
             <div className="title-label" style={{ position: 'absolute', top: 10, right: 10 }}>ACTIVE</div>
 
@@ -262,6 +262,65 @@ function App() {
             </svg>
             {/* Grid overlay */}
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '20px 20px', pointerEvents: 'none' }}></div>
+          </div>
+
+          <div className="data-row-split" style={{ marginTop: 30, flex: 'none' }}>
+            {/* DNS RESOLUTION CARD */}
+            <div style={{ border: '1px solid var(--border-color)', padding: 15, width: '48%', position: 'relative' }}>
+              <div className="title-label" style={{ marginBottom: 15 }}>DNS Resolution</div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                  <span style={{ width: 80 }}>CLOUDFLARE</span>
+                  <div style={{ flex: 1, margin: '0 10px', height: 4, background: 'var(--border-color)', position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '12%', background: 'var(--text-main)' }}></div>
+                  </div>
+                  <span>14ms</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                  <span style={{ width: 80 }}>GOOGLE</span>
+                  <div style={{ flex: 1, margin: '0 10px', height: 4, background: 'var(--border-color)', position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '21%', background: 'var(--text-main)' }}></div>
+                  </div>
+                  <span>24ms</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                  <span style={{ width: 80 }}>QUAD9</span>
+                  <div style={{ flex: 1, margin: '0 10px', height: 4, background: 'var(--border-color)', position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: '38%', background: 'var(--text-main)' }}></div>
+                  </div>
+                  <span>38ms</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ROUTE TRACE CARD */}
+            <div style={{ border: '1px solid var(--border-color)', padding: 15, width: '48%', position: 'relative' }}>
+              <div className="title-label" style={{ marginBottom: 15 }}>Active Route Trace</div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 25 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                  <div style={{ width: 10, height: 10, background: 'var(--text-main)', borderRadius: '50%' }}></div>
+                  <span style={{ fontSize: '0.65rem' }}>MAC</span>
+                </div>
+
+                <div style={{ flex: 1, borderTop: '1px dashed var(--text-dim)', margin: '0 5px', position: 'relative', top: '-10px' }}></div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                  <div style={{ width: 10, height: 10, background: 'var(--text-main)', borderRadius: '50%' }}></div>
+                  <span style={{ fontSize: '0.65rem' }}>WIFI</span>
+                </div>
+
+                <div style={{ flex: 1, borderTop: '1px dashed var(--text-dim)', margin: '0 5px', position: 'relative', top: '-10px' }}></div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                  <div style={{ width: 10, height: 10, border: '2px solid var(--text-main)', borderRadius: '50%', background: 'transparent' }}></div>
+                  <span style={{ fontSize: '0.65rem' }}>ISP</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

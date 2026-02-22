@@ -23,13 +23,11 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
-::-webkit-scrollbar-track {
-  background: var(--bg-color);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;    /* Firefox */
 }
 
 .dashboard {
@@ -68,7 +66,9 @@ body {
 /* LEFT COLUMN BLOCKS */
 .left-col-header {
   margin-bottom: 20px;
-  flex: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .large-telemetry {
@@ -161,6 +161,9 @@ body {
 .center-section {
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  padding-right: 0;
+  min-height: 0;
 }
 
 .speed-dials-container {
@@ -218,6 +221,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0;
+  overflow-y: auto;
+  padding-right: 0;
+  min-height: 0;
 }
 
 .summary-card {
