@@ -1,0 +1,435 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg-color: #000000;
+  --text-main: #ffffff;
+  --text-dim: #cccccc;
+  --border-color: #ffffff;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 30px;
+  gap: 30px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* HORIZONTAL LINES */
+.hr-line {
+  width: 100%;
+  height: 2px;
+  background-color: var(--border-color);
+  margin: 6px 0;
+}
+.hr-stack {
+  margin-bottom: 25px;
+}
+.hr-stack .hr-line {
+  height: 2px;
+  margin: 5px 0;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr 450px;
+  gap: 50px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* LEFT COLUMN BLOCKS */
+.left-col-header {
+  margin-bottom: 20px;
+  flex: none;
+}
+
+.large-telemetry {
+  font-size: 5.5rem;
+  line-height: 1;
+  margin: 15px 0 25px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  letter-spacing: 2px;
+}
+.telemetry-unit {
+  font-size: 2.5rem;
+}
+
+.data-row-split {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+.data-block {
+  display: flex;
+  flex-direction: column;
+  width: 48%;
+}
+
+/* LABELS AND HEADERS */
+.title-label {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 1px;
+}
+.title-label::before {
+  content: '≡';
+  font-size: 1.4rem;
+}
+
+.value-text {
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.value-unit {
+  font-size: 1.1rem;
+}
+
+/* DEVICES LIST */
+.devices-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-right: 10px;
+  margin-top: 10px;
+}
+.device-item {
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.device-item:last-child {
+  border-bottom: none;
+}
+.dev-name {
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dev-name::before {
+  content: '≡';
+}
+.dev-meta {
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 20px;
+  color: var(--text-dim);
+}
+
+/* CENTER SECTION: DIALS */
+.center-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.speed-dials-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.dial-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dial-top-text {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+.dial-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 5px;
+}
+.dial-value {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+.dial-unit {
+  font-size: 1.5rem;
+}
+
+.dial-svg {
+  width: 260px;
+  height: 260px;
+  position: relative;
+  align-self: center;
+  margin: 10px 0 20px 0;
+}
+.dial-bg {
+  stroke: var(--border-color);
+  stroke-width: 6;
+  stroke-dasharray: 4 12; /* outer dotted */
+}
+.dial-fg {
+  stroke: var(--border-color);
+  stroke-width: 3;
+  stroke-dasharray: 2 6; /* inner fine ticks */
+}
+
+/* RIGHT COLUMN: ACTIVE CONNS and TOPO */
+.right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.summary-card {
+  padding: 20px 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+}
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.card-title {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title::before {
+  content: '≡';
+}
+.card-desc {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+}
+.card-stats {
+  font-size: 1.1rem;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.topology-container {
+  flex: 1;
+  position: relative;
+  margin-top: 20px;
+}
+.node-container {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.node-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px dashed var(--border-color);
+  background: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  flex-direction: column;
+}
+.node-val {
+  font-size: 1.2rem;
+  margin-top: 5px;
+}
+.lines-svg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1;
+}
+.line-path {
+  stroke: var(--border-color);
+  stroke-width: 2;
+}
+
+/* TOPOLOGY POSITIONING */
+.node-top { top: 10%; left: 50%; transform: translateX(-50%); }
+.node-left { bottom: 20%; left: 10%; }
+.node-right { bottom: 20%; right: 10%; }
+
+/* --- HUD MODULE CARDS --- */
+.hud-card {
+  border: 1px solid var(--border-color);
+  padding: 15px;
+  position: relative;
+  background: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+/* Corner Accents */
+.hud-card::before, .hud-card::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--border-color);
+  pointer-events: none;
+}
+.hud-card::before {
+  top: -1px; left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+.hud-card::after {
+  bottom: -1px; right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+.hud-card-header {
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 8px;
+  margin-bottom: 5px;
+}
+.hud-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hud-card-title::before {
+  content: '>';
+}
+
+.hud-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 15px;
+  column-gap: 20px;
+  font-size: 0.95rem;
+}
+
+.hud-data-point {
+  display: flex;
+  flex-direction: column;
+}
+.hud-data-label {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.hud-data-value {
+  font-size: 1.1rem;
+}
+
+/* --- HUD BUTTONS --- */
+.hud-btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.hud-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 1;
+}
+.hud-btn:hover {
+  background: var(--text-main);
+  color: var(--bg-color);
+}
+.hud-btn:active {
+  background: var(--text-dim);
+}
+.hud-btn-small {
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  flex: none;
+}
+
+@keyframes pulseGlow {
+  0% { background: transparent; color: var(--text-main); }
+  50% { background: var(--text-main); color: var(--bg-color); }
+  100% { background: transparent; color: var(--text-main); }
+}
+
+.hud-btn-loading {
+  animation: pulseGlow 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes waveSlide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.oscilloscope-wave {
+  animation: waveSlide 4s linear infinite;
+}
+
